@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FITLIFT GYM - Quản lý thiết bị</title>
+
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+        font-family: Arial, sans-serif;
+        color: #fff;
+      }
+
+      .container {
+        display: flex;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 230px;
+        background: #000;
+        padding: 20px;
+      }
+
+      .sidebar h2 {
+        color: #fbdc3f;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar li {
+        margin: 18px 0;
+        cursor: pointer;
+      }
+
+      .sidebar li.active {
+        color: #fbdc3f;
+        font-weight: bold;
+      }
+
+      /* Content */
+      .content {
+        flex: 1;
+        padding: 30px;
+      }
+
+      .content h1 {
+        color: #fbdc3f;
+        margin-bottom: 20px;
+      }
+
+      /* Top actions */
+      .top-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .btn-yellow {
+        background: #fbdc3f;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .search-box input {
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid #fff;
+        background: #000;
+        color: white;
+        width: 200px;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      table th,
+      table td {
+        padding: 14px;
+        border-bottom: 1px solid #444;
+        text-align: left;
+      }
+
+      /* Nút sửa – xoá dưới bảng */
+      .bottom-buttons {
+        margin-top: 40px;
+        display: flex;
+        gap: 60px;
+        justify-content: center;
+      }
+
+      .edit-btn,
+      .delete-btn {
+        background: #fbdc3f;
+        border: none;
+        padding: 10px 32px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h2>FITLIFT GYM</h2>
+        <ul>
+          <li>Trang chủ</li>
+          <li>Quản lý gói tập</li>
+          <li>Quản lý dịch vụ</li>
+          <li class="active">Quản lý thiết bị</li>
+          <li>Khách hàng đăng ký</li>
+          <li>Thống kê</li>
+          <li>Cài đặt</li>
+        </ul>
+      </div>
+
+      <!-- Main content -->
+      <div class="content">
+        <h1>DANH SÁCH THIẾT BỊ</h1>
+
+        <!-- Top actions -->
+        <div class="top-actions">
+          <button class="btn-yellow">Thêm thiết bị mới</button>
+
+          <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm thiết bị" />
+          </div>
+        </div>
+
+        <!-- Table -->
+        <table>
+          <thead>
+            <tr>
+              <th>Tên thiết bị</th>
+              <th>Loại thiết bị</th>
+              <th>Mô tả</th>
+              <th>Tình trạng</th>
+              <th>Vị trí</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>Tạ tay</td>
+              <td>Tạ</td>
+              <td>5kg</td>
+              <td>Còn tốt</td>
+              <td>Phòng tập 1</td>
+            </tr>
+
+            <tr>
+              <td>Máy chạy bộ</td>
+              <td>Máy</td>
+              <td>LifT Fitness 2023</td>
+              <td>Bảo trì</td>
+              <td>Khu cardio</td>
+            </tr>
+
+            <tr>
+              <td>Thảm yoga</td>
+              <td>Phụ kiện</td>
+              <td>Cao su chống trượt</td>
+              <td>Còn tốt</td>
+              <td>Studio</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Nút sửa – xóa nằm dưới bảng -->
+        <div class="bottom-buttons">
+          <button class="edit-btn">Sửa</button>
+          <button class="delete-btn">Xoá</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

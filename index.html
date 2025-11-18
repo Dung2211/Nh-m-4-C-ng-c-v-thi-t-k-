@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quản lý Lịch Tập & Lớp Học</title>
+   <link rel="stylesheet" href="styles.css">
+<body>
+  <div class="container">
+    <header>
+      <h1>Quản lý Lịch Tập &amp; Lớp Học</h1>
+      <div class="top-bar">
+        <button class="btn create">+ Tạo mới</button>
+        <div class="controls">
+          <div class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"></circle>
+            </svg>
+            <input class="search-input" placeholder="Tìm kiếm" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="main-area">
+        <div class="card">
+          <div class="card-top">
+            <div class="filters">
+              <select name="filter-day"><option>Ngày</option></select>
+              <select name="filter-coach"><option>Huấn luyện viên</option></select>
+              <select name="filter-status"><option>Trạng thái</option></select>
+            </div>
+            <div class="card-actions">
+              <button class="btn ghost">Tìm</button>
+              <button class="btn export">Xuất</button>
+            </div>
+          </div>
+
+          <table class="schedule-table" aria-label="Danh sách lịch lớp">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên lớp</th>
+                <th>PT</th>
+                <th>Phòng</th>
+                <th>Ngày</th>
+                <th>Giờ</th>
+                <th>Số lượng tối đa</th>
+                <th>Đã đăng ký</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-id="1">
+                <td>1</td>
+                <td class="class-name">Yoga sáng</td>
+                <td class="coach">Anna</td>
+                <td class="room">Phòng 1</td>
+                <td class="date">12/11/2025</td>
+                <td class="time">06:00 - 07:00</td>
+                <td class="capacity">20</td>
+                <td class="registered">12</td>
+                <td class="status">Có chỗ</td>
+                <td class="actions">
+                  <button class="btn edit" data-action="edit">Sửa</button>
+                  <button class="btn delete" data-action="delete">Xóa</button>
+                </td>
+              </tr>
+
+              <!-- thêm các hàng trống/placeholder nếu cần -->
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="note">
+          Ghi chú: Nhấn "Tạo mới" để thêm lịch. Click vào một hàng để xem chi tiết.
+        </footer>
+      </section>
+
+      <aside class="right-col">
+        <section class="panel list-mini">
+          <h3>Danh sách (Mini)</h3>
+          <div class="mini-grid">
+            <div class="mini-cell">1</div>
+            <div class="mini-cell">2</div>
+            <div class="mini-cell">3</div>
+            <div class="mini-cell">4</div>
+            <div class="mini-cell">5</div>
+            <div class="mini-cell">6</div>
+          </div>
+          <div class="mini-actions">
+            <button class="btn ghost">Xóa</button>
+            <button class="btn">Đóng</button>
+          </div>
+        </section>
+
+        <section class="panel detail">
+          <h3>Chi tiết lớp học</h3>
+          <div class="detail-list">
+            <div><strong>Tên lớp:</strong> <span class="d-name">Yoga sáng</span></div>
+            <div><strong>Huấn luyện viên:</strong> <span class="d-coach">Anna</span></div>
+            <div><strong>Phòng:</strong> <span class="d-room">Phòng 1</span></div>
+            <div><strong>Ngày học:</strong> <span class="d-date">12/11/2025</span></div>
+            <div><strong>Thời gian:</strong> <span class="d-time">06:00 - 07:00</span></div>
+            <div><strong>Số lượng tối đa:</strong> <span class="d-capacity">20</span></div>
+            <div><strong>Đã đăng ký:</strong> <span class="d-registered">12</span></div>
+            <div><strong>Trạng thái:</strong> <span class="d-status">Có chỗ</span></div>
+          </div>
+          <div class="detail-actions">
+            <button class="btn ghost close-detail">Đóng</button>
+            <button class="btn register">Đăng ký</button>
+          </div>
+        </section>
+
+        <section class="panel form-panel">
+          <h3>Thêm / Sửa lịch</h3>
+          <form id="schedule-form">
+            <div class="form-row">
+              <label for="class-name">Tên lớp</label>
+              <input id="class-name" name="className" type="text" value="Yoga sáng" />
+            </div>
+
+            <div class="form-row">
+              <label for="coach">Huấn luyện viên (PT)</label>
+              <select id="coach" name="coach"><option>Anna</option></select>
+            </div>
+
+            <div class="form-row">
+              <label for="room">Phòng</label>
+              <select id="room" name="room"><option>Phòng 1</option></select>
+            </div>
+
+            <div class="form-row">
+              <label for="date">Ngày học</label>
+              <input id="date" name="date" type="date" />
+            </div>
+
+            <div class="form-row">
+              <label for="start-time">Giờ bắt đầu</label>
+              <input id="start-time" name="startTime" type="time" />
+            </div>
+
+            <div class="form-row">
+              <label for="end-time">Giờ kết thúc</label>
+              <input id="end-time" name="endTime" type="time" />
+            </div>
+
+            <div class="form-row">
+              <label for="capacity">Số lượng tối đa</label>
+              <input id="capacity" name="capacity" type="number" value="20" />
+            </div>
+
+            <div class="form-row">
+              <label for="registered">Số lượng đã đăng ký</label>
+              <input id="registered" name="registered" type="number" value="12" />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn ghost" id="btn-edit">Sửa</button>
+              <button type="submit" class="btn" id="btn-update">Cập nhật</button>
+            </div>
+          </form>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <!-- bạn có thể nối file css và js riêng bên dưới -->
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+  <!-- <script src="app.js"></script> -->
+</body>
+</html>

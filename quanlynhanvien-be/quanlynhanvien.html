@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý nhân viên - FitLife Gym</title>
+    <style>
+      /* ======================= CSS BÊN TRONG =========================== */
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background: #0d0d0d;
+        color: white;
+        display: flex;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 230px;
+        background: #111;
+        height: 100vh;
+        padding: 20px;
+      }
+
+      .logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: #f7ca57;
+        margin-bottom: 40px;
+      }
+
+      .menu li {
+        list-style: none;
+        padding: 14px 10px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: #d1d1d1;
+        transition: 0.2s;
+      }
+
+      .menu li:hover,
+      .menu li.active {
+        background: #1c1c1c;
+        color: #f7ca57;
+        border-radius: 8px;
+      }
+
+      /* MAIN CONTENT */
+      .main-content {
+        flex: 1;
+        padding: 30px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .header h1 {
+        flex: 1;
+        font-size: 32px;
+        color: #f7ca57;
+      }
+
+      .search-box {
+        position: relative;
+      }
+
+      .search-box input {
+        padding: 10px 35px 10px 15px;
+        border-radius: 8px;
+        border: none;
+        background: #1d1d1d;
+        color: white;
+        width: 240px;
+      }
+
+      .search-box i {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        color: #888;
+      }
+
+      .btn-add {
+        background: #f7ca57;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: black;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .btn-add:hover {
+        background: #ffd878;
+      }
+
+      .table-container {
+        margin-top: 30px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #111;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      thead {
+        background: #1c1c1c;
+        color: #f7ca57;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        font-size: 15px;
+        border-bottom: 1px solid #1c1c1c;
+      }
+
+      tr:hover {
+        background: #1a1a1a;
+      }
+
+      .active-status {
+        color: #66ff66;
+      }
+
+      .off-status {
+        color: #ff8080;
+      }
+
+      /* ================= POPUP ================= */
+
+      .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-content {
+        background: #1a1a1a;
+        padding: 25px;
+        border-radius: 10px;
+        width: 380px;
+        color: white;
+      }
+
+      .popup-content.small {
+        width: 320px;
+      }
+
+      .popup-content h2 {
+        margin-bottom: 15px;
+        color: #f7ca57;
+      }
+
+      .popup-content label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      .popup-content input,
+      .popup-content select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: none;
+        background: #2a2a2a;
+        color: white;
+        border-radius: 6px;
+      }
+
+      .popup-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .btn-save {
+        background: #f7ca57;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: black;
+        font-weight: bold;
+      }
+
+      .btn-cancel {
+        background: #555;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+      }
+
+      .btn-edit {
+        padding: 6px 12px;
+        background: #3a89ff;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .btn-delete {
+        padding: 6px 12px;
+        background: #ff4343;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .btn-delete-confirm {
+        background: red;
+        padding: 10px 18px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo">FITLIFE GYM</div>
+
+      <ul class="menu">
+        <li><i class="fa fa-home"></i> Trang chủ</li>
+        <li><i class="fa fa-box"></i> Quản lý Gói tập</li>
+        <li><i class="fa fa-concierge-bell"></i> Quản lý Dịch vụ</li>
+        <li class="active"><i class="fa fa-users"></i> Quản lý Nhân viên</li>
+        <li><i class="fa fa-user-check"></i> Khách đăng ký</li>
+        <li><i class="fa fa-chart-line"></i> Thống kê</li>
+        <li><i class="fa fa-cog"></i> Cài đặt</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="header">
+        <h1>DANH SÁCH NHÂN VIÊN</h1>
+
+        <div class="search-box">
+          <input type="text" placeholder="Tìm kiếm nhân viên" />
+          <i class="fa fa-search"></i>
+        </div>
+
+        <button class="btn-add" onclick="openAddPopup()">
+          <i class="fa fa-plus"></i> Thêm nhân viên mới
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table id="employeeTable">
+          <thead>
+            <tr>
+              <th>Họ và tên</th>
+              <th>Giới tính</th>
+              <th>Chức vụ</th>
+              <th>Số điện thoại</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>Phan Đình Rin</td>
+              <td>Nam</td>
+              <td>Huấn luyện</td>
+              <td>0795663013</td>
+              <td class="active-status">Đang làm việc</td>
+              <td>
+                <button class="btn-edit" onclick="openEditPopup(this)">
+                  Sửa
+                </button>
+                <button class="btn-delete" onclick="openDeletePopup(this)">
+                  Xóa
+                </button>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Hoàng Minh Khánh</td>
+              <td>Nam</td>
+              <td>Nhân viên</td>
+              <td>0977303980</td>
+              <td class="active-status">Đang làm việc</td>
+              <td>
+                <button class="btn-edit" onclick="openEditPopup(this)">
+                  Sửa
+                </button>
+                <button class="btn-delete" onclick="openDeletePopup(this)">
+                  Xóa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- POPUP THÊM -->
+    <div class="popup" id="addPopup">
+      <div class="popup-content">
+        <h2>Thêm nhân viên</h2>
+
+        <label>Họ và tên</label>
+        <input id="addName" type="text" />
+
+        <label>Giới tính</label>
+        <select id="addGender">
+          <option>Nam</option>
+          <option>Nữ</option>
+        </select>
+
+        <label>Chức vụ</label>
+        <input id="addPosition" type="text" />
+
+        <label>Số điện thoại</label>
+        <input id="addPhone" type="text" />
+
+        <label>Trạng thái</label>
+        <select id="addStatus">
+          <option>Đang làm việc</option>
+          <option>Nghỉ phép</option>
+        </select>
+
+        <div class="popup-actions">
+          <button class="btn-save" onclick="saveAdd()">Lưu</button>
+          <button class="btn-cancel" onclick="closePopup('addPopup')">
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POPUP SỬA -->
+    <div class="popup" id="editPopup">
+      <div class="popup-content">
+        <h2>Sửa nhân viên</h2>
+
+        <label>Họ và tên</label>
+        <input id="editName" type="text" />
+
+        <label>Giới tính</label>
+        <select id="editGender">
+          <option>Nam</option>
+          <option>Nữ</option>
+        </select>
+
+        <label>Chức vụ</label>
+        <input id="editPosition" type="text" />
+
+        <label>Số điện thoại</label>
+        <input id="editPhone" type="text" />
+
+        <label>Trạng thái</label>
+        <select id="editStatus">
+          <option>Đang làm việc</option>
+          <option>Nghỉ phép</option>
+        </select>
+
+        <div class="popup-actions">
+          <button class="btn-save" onclick="saveEdit()">Cập nhật</button>
+          <button class="btn-cancel" onclick="closePopup('editPopup')">
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POPUP XÓA -->
+    <div class="popup" id="deletePopup">
+      <div class="popup-content small">
+        <h2>Xóa nhân viên?</h2>
+        <p>Bạn có chắc chắn muốn xóa nhân viên này?</p>
+
+        <div class="popup-actions">
+          <button class="btn-delete-confirm" onclick="confirmDelete()">
+            Xóa
+          </button>
+          <button class="btn-cancel" onclick="closePopup('deletePopup')">
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  let selectedRow = null;
+  let selectedId = null;
+
+  /* ==========================================================
+      1. LOAD DANH SÁCH NHÂN VIÊN
+  =========================================================== */
+  function loadEmployees() {
+    fetch("api/get_employees.php")
+      .then(res => res.json())
+      .then(data => {
+        let tbody = document.querySelector("#employeeTable tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(emp => {
+          let row = `
+            <tr data-id="${emp.id}">
+              <td>${emp.name}</td>
+              <td>${emp.gender}</td>
+              <td>${emp.position}</td>
+              <td>${emp.phone}</td>
+              <td class="${emp.status === "Đang làm việc" ? "active-status" : "off-status"}">${emp.status}</td>
+              <td>
+                <button class="btn-edit" onclick="openEditPopup(this)">Sửa</button>
+                <button class="btn-delete" onclick="openDeletePopup(this)">Xóa</button>
+              </td>
+            </tr>
+          `;
+          tbody.innerHTML += row;
+        });
+      });
+  }
+
+  loadEmployees();
+
+
+
+  /* ==========================================================
+      2. POPUP HÀM MỞ / ĐÓNG
+  =========================================================== */
+  function openAddPopup() {
+    document.getElementById("addPopup").style.display = "flex";
+  }
+
+  function openEditPopup(btn) {
+    selectedRow = btn.parentElement.parentElement;
+    selectedId = selectedRow.getAttribute("data-id");
+
+    document.getElementById("editName").value = selectedRow.cells[0].innerText;
+    document.getElementById("editGender").value = selectedRow.cells[1].innerText;
+    document.getElementById("editPosition").value = selectedRow.cells[2].innerText;
+    document.getElementById("editPhone").value = selectedRow.cells[3].innerText;
+    document.getElementById("editStatus").value = selectedRow.cells[4].innerText;
+
+    document.getElementById("editPopup").style.display = "flex";
+  }
+
+  function openDeletePopup(btn) {
+    selectedRow = btn.parentElement.parentElement;
+    selectedId = selectedRow.getAttribute("data-id");
+
+    document.getElementById("deletePopup").style.display = "flex";
+  }
+
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+
+
+  /* ==========================================================
+      3. THÊM NHÂN VIÊN (ADD)
+  =========================================================== */
+  function saveAdd() {
+    let formData = new FormData();
+    formData.append("name", addName.value);
+    formData.append("gender", addGender.value);
+    formData.append("position", addPosition.value);
+    formData.append("phone", addPhone.value);
+    formData.append("status", addStatus.value);
+
+    fetch("api/add_employee.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        loadEmployees();
+        closePopup("addPopup");
+      }
+    });
+  }
+
+
+
+  /* ==========================================================
+      4. SỬA NHÂN VIÊN (UPDATE)
+  =========================================================== */
+  function saveEdit() {
+    let formData = new FormData();
+    formData.append("id", selectedId);
+    formData.append("name", editName.value);
+    formData.append("gender", editGender.value);
+    formData.append("position", editPosition.value);
+    formData.append("phone", editPhone.value);
+    formData.append("status", editStatus.value);
+
+    fetch("api/update_employee.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        loadEmployees();
+        closePopup("editPopup");
+      }
+    });
+  }
+
+
+
+  /* ==========================================================
+      5. XÓA NHÂN VIÊN (DELETE)
+  =========================================================== */
+  function confirmDelete() {
+    let formData = new FormData();
+    formData.append("id", selectedId);
+
+    fetch("api/delete_employee.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        loadEmployees();
+        closePopup("deletePopup");
+      }
+    });
+  }
+</script>
+
+  </body>
+</html>

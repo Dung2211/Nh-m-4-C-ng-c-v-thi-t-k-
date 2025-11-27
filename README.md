@@ -93,6 +93,10 @@ JavaScript thuần
 
 Font Awesome 6.5
 
+PHP
+
+PYTHON
+
 6. Ghi chú
 
 Website hiện tại chỉ là front-end tĩnh,

@@ -262,7 +262,7 @@
         <h1>DANH SÁCH NHÂN VIÊN</h1>
 
         <div class="search-box">
-          <input type="text" placeholder="Tìm kiếm nhân viên" />
+          <input id="searchInput" type="text" placeholder="Tìm kiếm nhân viên..." />
           <i class="fa fa-search"></i>
         </div>
 
@@ -411,39 +411,81 @@
     <script>
   let selectedRow = null;
   let selectedId = null;
+  let employeeList = []; // Lưu dữ liệu gốc để tìm kiếm
 
-  /* 1. LOAD DANH SÁCH NHÂN VIÊN */
+  /* RENDER DANH SÁCH NHÂN VIÊN */
+  function renderEmployees(list) {
+    let tbody = document.querySelector("#employeeTable tbody");
+    tbody.innerHTML = "";
+
+    list.forEach(emp => {
+      let row = `
+        <tr data-id="${emp.id}">
+          <td>${emp.name}</td>
+          <td>${emp.gender}</td>
+          <td>${emp.position}</td>
+          <td>${emp.phone}</td>
+          <td class="${emp.status === "Đang làm việc" ? "active-status" : "off-status"}">
+              ${emp.status}
+          </td>
+          <td>
+            <button class="btn-edit" onclick="openEditPopup(this)">Sửa</button>
+            <button class="btn-delete" onclick="openDeletePopup(this)">Xóa</button>
+          </td>
+        </tr>
+      `;
+      tbody.innerHTML += row;
+    });
+  }
+
+  /* LOAD DỮ LIỆU TỪ SERVER */
   function loadEmployees() {
     fetch("api/get_employees.php")
       .then(res => res.json())
       .then(data => {
-        let tbody = document.querySelector("#employeeTable tbody");
-        tbody.innerHTML = "";
 
-        data.forEach(emp => {
-          let row = `
-            <tr data-id="${emp.id}">
-              <td>${emp.name}</td>
-              <td>${emp.gender}</td>
-              <td>${emp.position}</td>
-              <td>${emp.phone}</td>
-              <td class="${emp.status === "Đang làm việc" ? "active-status" : "off-status"}">${emp.status}</td>
-              <td>
-                <button class="btn-edit" onclick="openEditPopup(this)">Sửa</button>
-                <button class="btn-delete" onclick="openDeletePopup(this)">Xóa</button>
-              </td>
-            </tr>
-          `;
-          tbody.innerHTML += row;
-        });
+        employeeList = data; //  Lưu làm nguồn tìm kiếm
+        renderEmployees(employeeList); //  Hiển thị ra bảng
       });
   }
 
   loadEmployees();
 
+  /* SEARCH REAL-TIME (TÌM KIẾM) */
 
+  // hàm chạy khi gõ phím
+  function searchEmployees(keyword) {
+    keyword = keyword.toLowerCase();
 
-  /* 2. POPUP HÀM MỞ / ĐÓNG */
+    let filtered = employeeList.filter(emp =>
+      emp.name.toLowerCase().includes(keyword) ||
+      emp.gender.toLowerCase().includes(keyword) ||
+      emp.position.toLowerCase().includes(keyword) ||
+      emp.phone.toLowerCase().includes(keyword) ||
+      emp.status.toLowerCase().includes(keyword)
+    );
+
+    renderEmployees(filtered);
+  }
+
+  // debounce tránh gọi quá nhiều
+  function debounce(func, delay) {
+    let timer;
+    return function () {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, arguments), delay);
+    };
+  }
+
+  // gắn sự kiện
+  document.getElementById("searchInput").addEventListener(
+    "keyup",
+    debounce(function () {
+      searchEmployees(this.value);
+    }, 200)
+  );
+
+  /* POPUP MỞ / ĐÓNG */
   function openAddPopup() {
     document.getElementById("addPopup").style.display = "flex";
   }
@@ -464,7 +506,6 @@
   function openDeletePopup(btn) {
     selectedRow = btn.parentElement.parentElement;
     selectedId = selectedRow.getAttribute("data-id");
-
     document.getElementById("deletePopup").style.display = "flex";
   }
 
@@ -472,18 +513,15 @@
     document.getElementById(id).style.display = "none";
   }
 
-
-
-  /* 3. THÊM NHÂN VIÊN (ADD) */
+  /* THÊM NHÂN VIÊN */
   function saveAdd() {
-    // KIỂM TRA RỖNG
     if (
       addName.value.trim() === "" ||
       addPosition.value.trim() === "" ||
       addPhone.value.trim() === ""
     ) {
       alert("Nhập đầy đủ thông tin");
-      return; // không chạy tiếp
+      return;
     }
 
     let formData = new FormData();
@@ -497,36 +535,30 @@
       method: "POST",
       body: formData
     })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "exist") {
+          alert("Số điện thoại đã tồn tại");
+          return;
+        }
 
-    .then(res => res.json())
-    .then(data => {
-      
-      // KIỂM TRA SỐ TRÙNG
-      if (data.status === "exist") {
-        alert("Số điện thoại đã tồn tại");
-        return;
-      }
-
-      if (data.status === "success") {
-        alert("Thêm mới nhân viên thành công!");
-        loadEmployees();
-        closePopup("addPopup");
-      }
-    });
+        if (data.status === "success") {
+          alert("Thêm mới nhân viên thành công!");
+          loadEmployees();
+          closePopup("addPopup");
+        }
+      });
   }
 
-
-
-  /* 4. SỬA NHÂN VIÊN (UPDATE) */
+  /*  CẬP NHẬT NHÂN VIÊN */
   function saveEdit() {
-    // KIỂM TRA RỖNG
     if (
       editName.value.trim() === "" ||
       editPosition.value.trim() === "" ||
       editPhone.value.trim() === ""
     ) {
       alert("Nhập đầy đủ thông tin");
-      return; // không chạy tiếp
+      return;
     }
 
     let formData = new FormData();
@@ -541,26 +573,22 @@
       method: "POST",
       body: formData
     })
-    .then(res => res.json())
-    .then(data => {
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "exist") {
+          alert("Số điện thoại đã tồn tại");
+          return;
+        }
 
-      // KIỂM TRA SỐ TRÙNG
-      if (data.status === "exist") {
-        alert("Số điện thoại đã tồn tại");
-        return;
-      }
-
-      if (data.status === "success") {
-        alert("Cập nhật thông tin nhân viên thành công!");
-        loadEmployees();
-        closePopup("editPopup");
-      }
-    });
+        if (data.status === "success") {
+          alert("Cập nhật thông tin nhân viên thành công!");
+          loadEmployees();
+          closePopup("editPopup");
+        }
+      });
   }
 
-
-
-  /* 5. XÓA NHÂN VIÊN (DELETE) */
+  /* XÓA NHÂN VIÊN */
   function confirmDelete() {
     let formData = new FormData();
     formData.append("id", selectedId);
@@ -569,14 +597,14 @@
       method: "POST",
       body: formData
     })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "success") {
-        alert("Xóa nhân viên thành công!");
-        loadEmployees();
-        closePopup("deletePopup");
-      }
-    });
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("Xóa nhân viên thành công!");
+          loadEmployees();
+          closePopup("deletePopup");
+        }
+      });
   }
 </script>
 
